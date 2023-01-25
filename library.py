@@ -53,15 +53,15 @@ def get_data(data):
                 for xkey, xvalue in data.items():
                     if xkey == "name":
                         authors += xvalue + ", "
+    output = title + "', '" + authors + "', '" + str(pages) + "', '" + published + "', '" + str(revision) + "', '" + pformat + "'"
+    return output
 
-    return title, authors, pages, published, revision, pformat
 
-
-values = get_data(json_data)
+values = "'" + isbn + "', '" + get_data(json_data)
 
 print(values)
 
-#row = "'" + isbn + "', '" + title + "', '" + authors + "', '" + str(pages) + "', '" + published + "', '" + str(revision) + "', '" + pformat + "'"
+#row =
 
 # _______________________ DB Functions ________________________
 #cur.execute("DROP TABLE books")
