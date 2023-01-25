@@ -12,6 +12,7 @@ with open("isbn_list.txt", "r+") as f:
 isbnlist = isbnlist_object.splitlines()
 json_data_list = []
 values_list = []
+isbn = ""
 
 # DB
 con = sql.connect("books.db")
