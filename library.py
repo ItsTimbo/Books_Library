@@ -6,8 +6,10 @@ import json
 url = "https://openlibrary.org/"
 
 # Books
-isbnlist_object = open(r"C:\Users\t1mm3\Projects\book_library\isbn_list.txt", "r+")
-isbnlist = isbnlist_object.readlines()
+with open("isbn_list.txt", "r+") as f:
+    isbnlist_object = f.read()
+
+isbnlist = isbnlist_object.splitlines()
 json_data_list = []
 values_list = []
 
@@ -68,12 +70,14 @@ for json_data in json_data_list:
     values_list.append("'" + isbn + "', '" + get_data(json_data))
 
 # _______________________ DB Functions ________________________
-cur.execute("DROP TABLE books")
-cur.execute("CREATE TABLE books (" + columns + ")")
+tableList = cur.execute("""SELECT name FROM sqlite_master WHERE type='table' AND name='books';""").fetchall()
+
+if not tableList:
+    cur.execute("CREATE TABLE books (" + columns + ")")
+
 for values in values_list:
     cur.execute("INSERT INTO books (" + columns + """)
                 VALUES(""" + values + ")")
 
-cur.execute("SELECT title FROM books")
-print(isbnlist)
+cur.execute("SELECT * FROM books")
 print(cur.fetchall())
