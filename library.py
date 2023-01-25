@@ -6,7 +6,10 @@ import json
 url = "https://openlibrary.org/"
 
 # Books
-isbn = "1888996471"
+isbnlist_object = open(r"C:\Users\t1mm3\Projects\book_library\isbn_list.txt", "r+")
+isbnlist = isbnlist_object.readlines()
+json_data_list = []
+values_list = []
 
 # DB
 con = sql.connect("books.db")
@@ -14,9 +17,9 @@ cur = con.cursor()
 columns = "ISBN, title, authors, pages, published, revision, physical_format"
 # _______________________ ISBN Request ________________________
 
-
-response = req.get(url + "isbn/" + isbn + ".json")
-json_data = json.loads(response.text)
+for isbn in isbnlist:
+    response = req.get(url + "isbn/" + isbn.strip() + ".json")
+    json_data_list.append(json.loads(response.text))
 
 
 # Get data from request
@@ -25,7 +28,10 @@ def get_data(data):
     authorsdict = []
     title = ""
     authors = ""
-    pages = ""
+    pages = 0
+    published = ""
+    revision = 0
+    pformat = ""
     for key, value in data.items():
         if key == "title":
             title = value
@@ -53,20 +59,21 @@ def get_data(data):
                 for xkey, xvalue in data.items():
                     if xkey == "name":
                         authors += xvalue + ", "
+
     output = title + "', '" + authors + "', '" + str(pages) + "', '" + published + "', '" + str(revision) + "', '" + pformat + "'"
     return output
 
 
-values = "'" + isbn + "', '" + get_data(json_data)
-
-print(values)
-
-#row =
+for json_data in json_data_list:
+    values_list.append("'" + isbn + "', '" + get_data(json_data))
 
 # _______________________ DB Functions ________________________
-#cur.execute("DROP TABLE books")
-#cur.execute("CREATE TABLE books (" + columns + ")")
-#cur.execute("INSERT INTO books (" + columns + """)
-#           VALUES(""" + row + ")")
-#cur.execute("SELECT * FROM books")
-#print(cur.fetchall())
+cur.execute("DROP TABLE books")
+cur.execute("CREATE TABLE books (" + columns + ")")
+for values in values_list:
+    cur.execute("INSERT INTO books (" + columns + """)
+                VALUES(""" + values + ")")
+
+cur.execute("SELECT title FROM books")
+print(isbnlist)
+print(cur.fetchall())
